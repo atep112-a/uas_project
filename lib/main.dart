@@ -25,7 +25,6 @@ void main() async {
   }
 
   runApp(MyApp());
-  print("App started");
 }
 
 class MyApp extends StatelessWidget {
@@ -34,7 +33,8 @@ class MyApp extends StatelessWidget {
     
     print("Building MyApp widget");
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false, // Menyembunyikan teks debug
+      title: 'Generate Surat Otomatis',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),

@@ -11,10 +11,7 @@ class DatabaseHelper {
   factory DatabaseHelper() => _instance;
   DatabaseHelper._internal();
 
-  // SQLite database instance for mobile/desktop
   static sqflite.Database? _database;
-
-  // Sembast database instance for web
   static sembast.DatabaseFactory? _dbFactory;
   static sembast.Database? _sembastDatabase;
   static final sembast.StoreRef<int, Map<String, dynamic>> store = sembast.intMapStoreFactory.store('surat');
@@ -73,7 +70,6 @@ class DatabaseHelper {
   Future<void> insertSurat(Surat surat) async {
     final db = await database;
     if (kIsWeb) {
-      // Set ID manually for sembast
       int key = await store.add(db, surat.toMap());
       surat.id = key; // Update the surat object with the generated key
     } else {

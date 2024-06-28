@@ -2,11 +2,17 @@ import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'models/surat.dart';
+import 'package:uas_project/utils/base64_utils.dart';
 
 Future<Uint8List> generateSuratPdf(Surat surat) async {
   final pdf = pw.Document();
 
-   pdf.addPage(
+  Uint8List imageBytes = decodeBase64Image(surat.uploadTTD);
+
+  // Debug print to check if imageBytes is populated
+  print('Image bytes length: ${imageBytes.length}');
+
+  pdf.addPage(
     pw.Page(
       build: (pw.Context context) => pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -35,7 +41,9 @@ Future<Uint8List> generateSuratPdf(Surat surat) async {
           pw.SizedBox(height: 40),
           pw.Text('${surat.tempatTerbit}, ${surat.tanggalTerbit}'),
           pw.SizedBox(height: 20),
-          pw.Text('${surat.uploadTTD}'),
+          if (imageBytes.isNotEmpty)
+            pw.Image(pw.MemoryImage(imageBytes), width: 50, height: 50),
+          
           pw.SizedBox(height: 20),
           pw.Text('${surat.nama}'),
         ],

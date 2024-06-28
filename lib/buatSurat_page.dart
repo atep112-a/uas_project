@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:uas_project/db/database_helper.dart';
+import 'package:uas_project/models/surat.dart';
 import 'package:uas_project/Datepicker.dart';
-import 'db/database_helper.dart';
-import 'models/surat.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:uas_project/utils/ImagePickerField.dart';
 
 class TextFieldItem extends StatelessWidget {
   final TextEditingController controller;
@@ -60,7 +63,7 @@ class _ScreenIzinOrtuState extends State<ScreenIzinOrtu> {
   }
 
   continued() {
-    _currentStep < 5 ? setState(() => _currentStep += 1) : null;
+    _currentStep < 6 ? setState(() => _currentStep += 1) : null;
   }
 
   cancel() {
@@ -68,29 +71,28 @@ class _ScreenIzinOrtuState extends State<ScreenIzinOrtu> {
   }
 
   Future<void> _saveData() async {
-  if (_formKey.currentState!.validate()) {
-    Surat newSurat = Surat(
-      nama: nama.text,
-      jabatan: jabatan.text,
-      perusahaan: perusahaan.text,
-      namaPenerima: namaPenerima.text,
-      jabatanPenerima: jabatanPenerima.text,
-      namaMahasiswa: namaMahasiswa.text,
-      nim: nim.text,
-      kelas: kelas.text,
-      namaUniv: namaUniv.text,
-      perihalIzin: perihalIzin.text,
-      izinMulai: izinMulai.text,
-      izinSelesai: izinSelesai.text,
-      tempatTerbit: tempatTerbit.text,
-      tanggalTerbit: tanggalTerbit.text,
-      uploadTTD: uploadTTD.text,
-    );
-    await DatabaseHelper().insertSurat(newSurat);
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Data berhasil disimpan')));
+    if (_formKey.currentState!.validate()) {
+      Surat newSurat = Surat(
+        nama: nama.text,
+        jabatan: jabatan.text,
+        perusahaan: perusahaan.text,
+        namaPenerima: namaPenerima.text,
+        jabatanPenerima: jabatanPenerima.text,
+        namaMahasiswa: namaMahasiswa.text,
+        nim: nim.text,
+        kelas: kelas.text,
+        namaUniv: namaUniv.text,
+        perihalIzin: perihalIzin.text,
+        izinMulai: izinMulai.text,
+        izinSelesai: izinSelesai.text,
+        tempatTerbit: tempatTerbit.text,
+        tanggalTerbit: tanggalTerbit.text,
+        uploadTTD: uploadTTD.text,
+      );
+      await DatabaseHelper().insertSurat(newSurat);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Data berhasil disimpan')));
+    }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +151,6 @@ class _ScreenIzinOrtuState extends State<ScreenIzinOrtu> {
                           const SizedBox(height: 5),
                           TextFieldItem(controller: jabatanPenerima, hintText: 'Penanggung Jawab Kegiatan', label: 'Jabatan Penerima'),
                           const SizedBox(height: 5),
-                         
                         ],
                       ),
                       isActive: _currentStep >= 0,
@@ -190,7 +191,7 @@ class _ScreenIzinOrtuState extends State<ScreenIzinOrtu> {
                           const SizedBox(height: 5),
                           DatePicker(controller: izinSelesai, label: 'Sampai', hintText: DateTime.now().toString()),
                           const SizedBox(height: 5),
-                          TextFieldItem(controller: tempatTerbit, hintText: 'Jawa Tengah', label: 'Tempat Diterbitkan Surat'),
+                          TextFieldItem(controller: tempatTerbit, hintText: 'Bandung', label: 'Tempat Diterbitkan Surat'),
                           const SizedBox(height: 5),
                           DatePicker(controller: tanggalTerbit, label: 'Tanggal Terbit Surat', hintText: DateTime.now().toString()),
                         ],
@@ -210,63 +211,18 @@ class _ScreenIzinOrtuState extends State<ScreenIzinOrtu> {
                     ),
                   ],
                 ),
-               ElevatedButton(
-                    onPressed: () async {
-                      await _saveData();
-                      Navigator.pop(context); // Kembali ke halaman sebelumnya setelah menyimpan data
-                    },
-                    child: const Text('Simpan'),
-                  )
-
+                ElevatedButton(
+                  onPressed: () async {
+                    await _saveData();
+                    Navigator.pop(context); // Kembali ke halaman sebelumnya setelah menyimpan data
+                  },
+                  child: const Text('Simpan Data'),
+                ),
               ],
             ),
           ),
         ),
       ),
-    );
-  }
-}
-
-class ImagePickerField extends StatefulWidget {
-  final TextEditingController controller;
-  final String label;
-
-  const ImagePickerField({Key? key, required this.controller, required this.label}) : super(key: key);
-
-  @override
-  _ImagePickerFieldState createState() => _ImagePickerFieldState();
-}
-
-class _ImagePickerFieldState extends State<ImagePickerField> {
-  final ImagePicker _picker = ImagePicker();
-
-  Future<void> _pickImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      widget.controller.text = image.path;
-      setState(() {});
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(widget.label, style: TextStyle(fontWeight: FontWeight.bold)),
-        SizedBox(height: 8),
-        TextFormField(
-          controller: widget.controller,
-          readOnly: true,
-          decoration: InputDecoration(
-            hintText: 'No file selected',
-            suffixIcon: IconButton(
-              icon: Icon(Icons.file_upload),
-              onPressed: _pickImage,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

@@ -14,7 +14,7 @@ class Surat {
   final String izinSelesai;
   final String tempatTerbit;
   final String tanggalTerbit;
-  final String uploadTTD;
+  final String uploadTTD; // Base64 encoded image
 
   Surat({
     this.id,

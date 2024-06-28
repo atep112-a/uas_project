@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:printing/printing.dart';
+import 'package:uas_project/utils/base64_utils.dart';
 import 'package:uas_project/generate_letter_page.dart';
+import 'package:uas_project/db/database_helper.dart';
+import 'package:uas_project/models/surat.dart';
+import 'package:uas_project/editSurat_page.dart';
+import 'package:printing/printing.dart';
 import 'buatSurat_page.dart';
-import 'db/database_helper.dart';
-import 'models/surat.dart';
-import 'editSurat_page.dart';
-// import 'pdf_generator.dart'; // Import the PDF generator
+import 'package:image_picker/image_picker.dart';
 
 class DashboardPage extends StatefulWidget {
   @override
@@ -33,7 +34,20 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dashboard'),
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/images/logo.png', // Perhatikan path relatif dari pubspec.yaml
+              height: 20,
+              errorBuilder: (context, error, stackTrace) {
+                print("Error loading image: $error");
+                return Icon(Icons.error);
+              },
+            ),
+            SizedBox(width: 10), // Spasi antara logo dan teks
+            Text('Dashboard'),
+          ],
+        ),
       ),
       body: FutureBuilder<List<Surat>>(
         future: futureSuratList,
@@ -59,6 +73,8 @@ class _DashboardPageState extends State<DashboardPage> {
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
+                      if (surat.uploadTTD.isNotEmpty)
+                        Image.memory(decodeBase64Image(surat.uploadTTD), width: 50, height: 50),
                       IconButton(
                         icon: const Icon(Icons.edit),
                         onPressed: () async {
